@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired
 from flask_moment import Moment
 from datetime import datetime
 import json
+import requests
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -104,7 +105,9 @@ def dashboard():
     with open('data/grades.json') as gradesFile:
         grades = json.load(gradesFile)
         gradesFile.close()
-    return render_template('dashboard.html', title='Dashboard', userLogin=session.get('userLogin'), firstName=session.get('firstName'), date=date, grades=grades, countAverage=countAverage, yearlyAverage=yearlyAverage)
+    weatherSource = requests.get('https://danepubliczne.imgw.pl/api/data/synop/station/krakow')
+    weather = json.load(weatherSource.content)
+    return render_template('dashboard.html', title='Dashboard', userLogin=session.get('userLogin'), firstName=session.get('firstName'), date=date, grades=grades, countAverage=countAverage, yearlyAverage=yearlyAverage, weather=weather)
 
 @app.route('/addSubject', methods=['POST', 'GET'])
 def addSubject():
